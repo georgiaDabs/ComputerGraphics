@@ -44,7 +44,59 @@ var g_normalMatrix = new Matrix4();  // Coordinate transformation matrix for nor
 var ANGLE_STEP = 3.0;  // The increments of rotation angle (degrees)
 var g_xAngle = 0.0;    // The rotation x angle (degrees)
 var g_yAngle = 0.0;    // The rotation y angle (degrees)
-
+var signRotate=0.0;
+var carDrive=0.0;
+var perspective=30;
+var colours=new Float32Array([]);
+var colourInt=0;
+var blueColours=new Float32Array([
+  0,0,1,0,0,1,0,0,1,0,0,1,
+  0,0,1,0,0,1,0,0,1,0,0,1,
+  0,0,1,0,0,1,0,0,1,0,0,1,
+  0,0,1,0,0,1,0,0,1,0,0,1,
+  0,0,1,0,0,1,0,0,1,0,0,1,
+  0,0,1,0,0,1,0,0,1,0,0,1
+  ]);
+var greenColours=new Float32Array([
+  0,1,0,0,1,0,0,1,0,0,1,0,
+  0,1,0,0,1,0,0,1,0,0,1,0,
+  0,1,0,0,1,0,0,1,0,0,1,0,
+  0,1,0,0,1,0,0,1,0,0,1,0,
+  0,1,0,0,1,0,0,1,0,0,1,0,
+  0,1,0,0,1,0,0,1,0,0,1,0
+  ]);
+var brownColours=new Float32Array([
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,
+  0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875,0.4375,0.3125,0.21875
+  ]);
+var whiteColours = new Float32Array([    // Colors
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1,     // v0-v1-v2-v3 front
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1,     // v0-v3-v4-v5 right
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1,     // v0-v5-v6-v1 up
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1,     // v1-v6-v7-v2 left
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1,     // v7-v4-v3-v2 down
+    1, 1, 1,   1, 1, 1,   1, 1, 1,  1, 1, 1　    // v4-v7-v6-v5 back
+ ]);
+var redColours=new Float32Array([
+  1,0,0,1,0,0,1,0,0,1,0,0,
+  1,0,0,1,0,0,1,0,0,1,0,0,
+  1,0,0,1,0,0,1,0,0,1,0,0,
+  1,0,0,1,0,0,1,0,0,1,0,0,
+  1,0,0,1,0,0,1,0,0,1,0,0,
+  1,0,0,1,0,0,1,0,0,1,0,0
+  ]);
+var blackColours=new Float32Array([
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
+0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1
+    ]);
 function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
@@ -96,7 +148,7 @@ function main() {
 
   // Calculate the view matrix and the projection matrix
   viewMatrix.setLookAt(0, 0, 15, 0, 0, -100, 0, 1, 0);
-  projMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
+  projMatrix.setPerspective(perspective, canvas.width/canvas.height, 1, 100);
   // Pass the model, view, and projection matrix to the uniform variable respectively
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
@@ -123,13 +175,47 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
     case 37: // Left arrow key -> the negative rotation of arm1 around the y-axis
       g_yAngle = (g_yAngle - ANGLE_STEP) % 360;
       break;
+    case 71: //rotate signs g
+      signRotate=(signRotate+ANGLE_STEP ) %360;
+      break;
+    case 72://opposit rotate signs h
+      signRotate=(signRotate-ANGLE_STEP)%360;
+      break;
+    case 68://drive car forward
+      carDrive=(carDrive+0.1);
+      break;
+    case 67://drive car backwards
+      carDrive=(carDrive-0.1);
+      break;
+    case 90://zoom
+      perspective=(perspective+0.1);
+      break;
     default: return; // Skip drawing at no effective action
   }
 
   // Draw the scene
   draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting);
 }
+function roofVertexBuffer(gl){
+  var vertices =new Float32Array([
+    -2.0,-0.5,1.0,  -1.0,2.0,0.0,   1.0,2.0,0.0,    2.0,-0.5,1.0,
+    -1.0,0.0,2.0, -1.0,1.0,1.0, 1.0,1.0,1.0,2.0,-0.5,1.0
+    ]);
+  var colours=new Float32Array([
+    0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+    ]);
+   if (!initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', colors, 3, gl.FLOAT)) return -1;
+  var indexBuffer = gl.createBuffer();
+  if (!indexBuffer) {
+    console.log('Failed to create the buffer object');
+    return false;
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
+  return indices.length;
+}
 
 function initVertexBuffers(gl) {
   // Create a cube
@@ -148,16 +234,6 @@ function initVertexBuffers(gl) {
     -0.5,-0.5,-0.5,   0.5,-0.5,-0.5,   0.5,-0.5, 0.5,  -0.5,-0.5, 0.5, // v7-v4-v3-v2 down
      0.5,-0.5,-0.5,  -0.5,-0.5,-0.5,  -0.5, 0.5,-0.5,   0.5, 0.5,-0.5  // v4-v7-v6-v5 back
   ]);
-
-
-  var colors = new Float32Array([    // Colors
-    0, 1, 0,   0, 1, 0,   0, 1, 0,  0, 1, 0,     // v0-v1-v2-v3 front
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v3-v4-v5 right
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v0-v5-v6-v1 up
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v1-v6-v7-v2 left
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0,     // v7-v4-v3-v2 down
-    1, 0, 0,   1, 0, 0,   1, 0, 0,  1, 0, 0　    // v4-v7-v6-v5 back
- ]);
 
 
   var normals = new Float32Array([    // Normal
@@ -179,11 +255,15 @@ function initVertexBuffers(gl) {
     16,17,18,  16,18,19,    // down
     20,21,22,  20,22,23     // back
  ]);
+if(colourInt==0){
+  colours=whiteColours;
+}else if(colourInt==1){
+  colours=blackColours;
 
-
+}
   // Write the vertex property to buffers (coordinates, colors and normals)
   if (!initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
-  if (!initArrayBuffer(gl, 'a_Color', colors, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', colours, 3, gl.FLOAT)) return -1;
   if (!initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
 
   // Write the indices to the buffer object
@@ -297,7 +377,7 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
     console.log('Failed to set the vertex information');
     return;
   }
-
+  var m=
   // Calculate the view matrix and the projection matrix
   modelMatrix.setTranslate(0, 0, 0);  // No Translation
   // Pass the model matrix to the uniform variable
@@ -320,40 +400,236 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
   modelMatrix.rotate(g_yAngle, 0, 1, 0); // Rotate along y axis
   modelMatrix.rotate(g_xAngle, 1, 0, 0); // Rotate along x axis
 
-  // Model the chair seat
+  // Main block
   pushMatrix(modelMatrix);
-    modelMatrix.scale(2.0, 0.5, 2.0); // Scale
+    modelMatrix.scale(4.0, 3.0, 2.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
 
-  // Model the chair back
+  // left block
   pushMatrix(modelMatrix);
-    modelMatrix.translate(0, 1.25, -0.75);  // Translation
-    modelMatrix.scale(2.0, 2.0, 0.5); // Scale
+    modelMatrix.translate(-1.0, 0.5, -2.0);  // Translation
+    
+    modelMatrix.scale(6.0, 4.0, 2.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
- 
+
+
+ // first diagonal
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-3.38, 0.0, -0.7);  // Translation
+    modelMatrix.rotate(20,0,1,0);
+    modelMatrix.scale(1.0, 3.0, 1.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-3.88, 0.5, -0.5);  // Translation
+    modelMatrix.rotate(20,0,1,0);
+    modelMatrix.scale(0.2,0.2,1.2);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // second diagonal
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-3.0, 0.0, 0.04);  // Translation
+    modelMatrix.rotate(40,0.0,1.0,0.0);
+    modelMatrix.scale(1.0, 3.0, 1.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // third diagonal
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-2.45, 0.0, 0.4);  // Translation
+    modelMatrix.rotate(70,0.0,1.0,0.0);
+    modelMatrix.scale(1.0, 3.0, 1.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+
+  //flatroad
+  pushMatrix(modelMatrix);
+    modelMatrix.translate(-4.5, -1.0, 0.0);  
+    modelMatrix.scale(3.0, 0.2, 9.0); // Scale
+
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //nonflatroad
+  pushMatrix(modelMatrix);
+    if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.rotate(4,0.0,0.0,1.0);
+    modelMatrix.translate(0.5, -1.2, 2.5);  
+    modelMatrix.scale(11.0, 1.0, 3.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //front sign
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greenColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.0,0.5,0.0);
+    modelMatrix.rotate(signRotate, 0.0,0.0,1.0);
+    modelMatrix.translate(0.0, 0.3, 1.5);  
+    modelMatrix.scale(0.1, 0.5, 0.5); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //side sign
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greenColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.0,0.5,0.0);
+    modelMatrix.rotate(signRotate, 1.0, 0.0 ,0.0);
+    modelMatrix.translate(-4.5, 0.3, -0.4);  
+    modelMatrix.scale(0.5, 0.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //car body
+  var carXPos=-4.8;
+  var carYPos=-2.0+carDrive;
+  var carZPos=-0.3;
+  pushMatrix(modelMatrix);
+    if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos, carZPos, carYPos); 
+    modelMatrix.scale(1.0, 0.5, 1.6); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top right wheel
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos+0.35,carZPos-0.35, carYPos-0.65); 
+    modelMatrix.scale(0.15, 0.3, 0.3); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top left
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos-0.35,carZPos-0.35, carYPos-0.65); 
+    modelMatrix.scale(0.15, 0.3, 0.3); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //bottom left
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos-0.35,carZPos-0.35, carYPos+0.65); 
+    modelMatrix.scale(0.15, 0.3, 0.3); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //bottom right
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos+0.35,carZPos-0.35, carYPos+0.65); 
+    modelMatrix.scale(0.15, 0.3, 0.3); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //car roof
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos,carZPos+0.4, carYPos+0.2); 
+    modelMatrix.scale(1.0, 0.4, 0.8); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos-0.505,carZPos+0.4, carYPos+0.2); 
+    
+    modelMatrix.scale(0.01, 0.2, 0.6); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+//right window
 pushMatrix(modelMatrix);
-    modelMatrix.translate(0.8, -1.0, -0.75);  // Translation
-    modelMatrix.scale(0.5, 2.0, 0.5); // Scale
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos+0.505,carZPos+0.4, carYPos+0.2); 
+    
+    modelMatrix.scale(0.01, 0.2, 0.6); // Scale
+    
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  
+  //front window
   pushMatrix(modelMatrix);
-    modelMatrix.translate(-0.8, -1.0, -0.75);  // Translation
-    modelMatrix.scale(0.5, 2.0, 0.5); // Scale
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(carXPos,carZPos+0.4, carYPos-0.205); 
+    
+    modelMatrix.scale(0.8, 0.2, 0.01); // Scale
+    
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  
+  //black pillar
   pushMatrix(modelMatrix);
-    modelMatrix.translate(0.8, -1.0, 0.75);  // Translation
-    modelMatrix.scale(0.5, 2.0, 0.5); // Scale
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-2.05,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  
+  //black pillar
   pushMatrix(modelMatrix);
-    modelMatrix.translate(-0.8, -1.0, 0.75);  // Translation
-    modelMatrix.scale(0.5, 2.0, 0.5); // Scale
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-3.05,-0.25, 0.8); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-3.75,-0.25, 0.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-1.0,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.0,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(1.0,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(2.0,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.0,0.5, 1.0); 
+    
+    modelMatrix.scale(4.0, 0.2, 0.2); // Scale
+    
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
 }
