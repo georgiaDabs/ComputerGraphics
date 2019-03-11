@@ -51,6 +51,31 @@ var signClockwise=true;
 var zoom=1.0;
 var cubeColours=new Float32Array([]);
 var colourInt=0;
+var pyramidVertices = new Float32Array([
+    // Front face
+    0.0,  1.0,  0.0,
+    -1.0, -1.0,  1.0,
+    1.0, -1.0,  1.0,
+    // Right face
+    0.0,  1.0,  0.0,
+    1.0, -1.0,  1.0,
+    1.0, -1.0, -1.0,
+    // Back face
+    0.0,  1.0,  0.0,
+    1.0, -1.0, -1.0,
+    -1.0, -1.0, -1.0,
+    // Left face
+    0.0,  1.0,  0.0,
+    -1.0, -1.0, -1.0,
+    -1.0, -1.0,  1.0
+  ]);
+var xCentre=0.0;
+var yCentre=0.0;
+var zCentre=0.0;
+var orangeOn=false;
+var redOn=false;
+var lorryY=-2.0;
+var greenOn=true;
 var blueColours=new Float32Array([
   0,0,1,0,0,1,0,0,1,0,0,1,
   0,0,1,0,0,1,0,0,1,0,0,1,
@@ -58,6 +83,14 @@ var blueColours=new Float32Array([
   0,0,1,0,0,1,0,0,1,0,0,1,
   0,0,1,0,0,1,0,0,1,0,0,1,
   0,0,1,0,0,1,0,0,1,0,0,1
+  ]);
+var orangeColours=new Float32Array([
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
+1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0
   ]);
 var greenColours=new Float32Array([
   0,1,0,0,1,0,0,1,0,0,1,0,
@@ -107,6 +140,20 @@ var blackColours=new Float32Array([
 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,
 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1
     ]);
+var pyramidColours=new Float32Array([
+    1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,
+    1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,
+    1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,
+    1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+    ]);
+var lightGreyColours=new Float32Array([
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
+0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7
+  ]);
 function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
@@ -198,6 +245,14 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
         signRotate=(signRotate+ANGLE_STEP)%360;
       }
       break;
+    case 82:
+    if((lorryY>-2.5)||(greenOn==true)||(lorryY<-3.5)){
+      lorryY=(lorryY+0.1);
+    }
+      break;
+    case 69:
+      lorryY=lorryY-0.1;
+      break;
     case 72://opposit rotate signs h
       if(signRotate>235){
         signClockwise=true;
@@ -211,14 +266,50 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
         signRotate=(signRotate-ANGLE_STEP)%360;
       }
       break;
-    case 68://drive car forward
+    case 68://drive car backwards D
+
       carDrive=(carDrive+0.1);
       break;
-    case 67://drive car backwards
+    case 67://drive car forwards C
+    
+      if((greenOn==true)||(carDrive<0)||(carDrive>0.5)){
+    
       carDrive=(carDrive-0.1);
+    }
       break;
-    case 90://zoom
-      zoom=(zoom+0.1);
+    case 73:
+      xCentre=(xCentre+0.1);
+      break;
+    case 75:
+      xCentre=(xCentre-0.1);
+      break;
+    case 74:
+      yCentre=(yCentre+0.1);
+      break;
+    case 76:
+      yCentre=(yCentre-0.1);
+      break;
+    case 77:
+      zCentre=(zCentre+0.1);
+      break;
+    case 188:
+      zCentre=(zCentre-0.1);
+      break;
+    case 81:
+      if(greenOn==true){
+        orangeOn=true;
+        greenOn=false;
+      }else if(redOn&&orangeOn){
+        redOn=false;
+        orangeOn=false;
+        greenOn=true;
+      }else if(redOn){
+        redOn=true;
+        orangeOn=true;
+      }else{
+        redOn=true;
+        orangeOn=false;
+      }
       break;
     default: return; // Skip drawing at no effective action
   }
@@ -264,11 +355,6 @@ function initVertexBuffers(gl) {
     -0.5,-0.5,-0.5,   0.5,-0.5,-0.5,   0.5,-0.5, 0.5,  -0.5,-0.5, 0.5, // v7-v4-v3-v2 down
      0.5,-0.5,-0.5,  -0.5,-0.5,-0.5,  -0.5, 0.5,-0.5,   0.5, 0.5,-0.5  // v4-v7-v6-v5 back
   ]);
-  var triangleVerticesColour=new Float32Array([ 
-  0.0,  0.5,  -0.4,  0.4,  1.0,  0.4, // The back green one
-    -0.5, -0.5,  -0.4,  0.4,  1.0,  0.4,
-     0.5, -0.5,  -0.4,  1.0,  0.4,  0.4, ]);
-  var traingleN=3
 
   var cubeNormals = new Float32Array([    // Normal
     0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
@@ -430,7 +516,7 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
   }
 
   // Rotate, and then translate
-  modelMatrix.setTranslate(0, 0, 0);  // Translation (No translation is supported here)
+  modelMatrix.setTranslate(xCentre, yCentre, zCentre);  // Translation (No translation is supported here)
   modelMatrix.rotate(g_yAngle, 0, 1, 0); // Rotate along y axis
   modelMatrix.rotate(g_xAngle, 1, 0, 0); // Rotate along x axis
 
@@ -614,8 +700,8 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //flatroad
   pushMatrix(modelMatrix);
-    modelMatrix.translate(-4.5, -1.0, 0.0);  
-    modelMatrix.scale(3.0, 0.2, 9.0); // Scale
+    modelMatrix.translate(-7.0, -1.0, 0.0);  
+    modelMatrix.scale(5.0, 0.2, 9.0); // Scale
 
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
@@ -623,7 +709,7 @@ pushMatrix(modelMatrix);
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
   
-    modelMatrix.translate(-3.8, -1.25, -1.5);  
+    modelMatrix.translate(-3.9, -1.25, -1.5);  
     modelMatrix.scale(1.5, 1.0, 6.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
@@ -657,22 +743,171 @@ pushMatrix(modelMatrix);
     modelMatrix.translate(0.0,0.5,0.0);
     modelMatrix.rotate(signRotate, 0.0,0.0,1.0);
     modelMatrix.translate(0.0, 0.3, 1.5);  
-    modelMatrix.scale(0.1, 0.5, 0.5); // Scale
+    modelMatrix.scale(0.1, 0.4, 0.4); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //side sign
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', greenColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(-0.5,0.0,0.0);
-    modelMatrix.rotate(signRotate, 1.0, 0.0 ,0.0);
-    modelMatrix.translate(-4.5, 0.3, -0.4);  
-    modelMatrix.scale(0.5, 0.5, 0.1); // Scale
     
+    modelMatrix.translate(0.0,0.6,-1.0);
+    modelMatrix.rotate(signRotate-90.0, 1.0,0.0,0.0);
+    modelMatrix.translate(-4.3, 0.0, 0.5);  
+    modelMatrix.scale(0.4, 0.1, 0.4); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
   modelMatrix = popMatrix();
+  //wood for side sign
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(-4.0,0.5,-1.0);
+    modelMatrix.scale(1.0,0.05,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //wood for front sign
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(0.0,0.5,1.5);
+    modelMatrix.scale(0.05,0.05,1.0);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //traffic light 1 stand
+  var trafficX=-4.5;
+  var trafficZ=0.0;
+  var trafficY=0.5;
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ,trafficY);
+    modelMatrix.scale(0.2,2.0,0.2);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //trffic light 1 body
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY);
+    modelMatrix.scale(0.4,1.0,0.4);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //red light
+  pushMatrix(modelMatrix);
+    var redTraffic=new Float32Array([]);
+    if(redOn){
+      redTraffic=redColours;
+    } else{
+      redTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', redTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.8,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //red light
+  pushMatrix(modelMatrix);
+    var redTraffic=new Float32Array([]);
+    if(redOn){
+      redTraffic=redColours;
+    } else{
+      redTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', redTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.8,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+
+  //orange light
+  pushMatrix(modelMatrix);
+  var orangeTraffic=new Float32Array([]);
+    if(orangeOn){
+      orangeTraffic=orangeColours;
+    } else{
+      orangeTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', orangeTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //orange light
+  pushMatrix(modelMatrix);
+  var orangeTraffic=new Float32Array([]);
+    if(orangeOn){
+      orangeTraffic=orangeColours;
+    } else{
+      orangeTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', orangeTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //green light
+  pushMatrix(modelMatrix);
+  var greenTraffic=new Float32Array([]);
+    if(greenOn){
+      greenTraffic=greenColours;
+    } else{
+      greenTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', greenTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.2,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //green light
+  pushMatrix(modelMatrix);
+  var greenTraffic=new Float32Array([]);
+    if(greenOn){
+      greenTraffic=greenColours;
+    } else{
+      greenTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', greenTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.2,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //traffic light 2 stand
+  /*pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(-5.0,0.0,1.8);
+    modelMatrix.scale(0.2,2.0,0.2);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //traffic light 2 body
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(-5.0,0.5,1.8);
+    modelMatrix.scale(0.4,1.0,0.4);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();*/
   //car body
-  var carXPos=-5.5;
-  var carYPos=-2.0+carDrive;
+  var carXPos=-7.5;
+  var carYPos=4.5+carDrive;
   var carZPos=-0.4;
   pushMatrix(modelMatrix);
     if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
@@ -721,6 +956,108 @@ pushMatrix(modelMatrix);
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  var lorryX=-5.5;
+  
+  var lorryZ=0.0;
+  //lorryboddy
+pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', lightGreyColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX,lorryZ, lorryY); 
+    
+    modelMatrix.scale(0.8, 1.5, 3.0); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry front bit
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX,lorryZ-0.25, lorryY+1.9); 
+    
+    modelMatrix.scale(0.8, 1.0, 0.8); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX-0.41,lorryZ, lorryY+1.9); 
+    
+    modelMatrix.scale(0.05, 0.3, 0.6); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX+0.41,lorryZ, lorryY+1.9); 
+    
+    modelMatrix.scale(0.05, 0.3, 0.6); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry front room
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX,lorryZ, lorryY+2.3); 
+    
+    modelMatrix.scale(0.7, 0.3, 0.05); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry 1st back right tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-1.2); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry 2nd back tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-0.5); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry 1st back left tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-1.2); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry 2nd back right tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-0.5); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry front left tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY+1.5); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //lorry front left tire
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+1.5); 
+    
+    modelMatrix.scale(0.2, 0.5, 0.5); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
   //left window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
@@ -730,6 +1067,7 @@ pushMatrix(modelMatrix);
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+
 //right window
 pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
@@ -830,6 +1168,19 @@ pushMatrix(modelMatrix);
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+ //roof of paddys
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Position', pyramidVertices, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', pyramidColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-2.45,2.0,0.0); 
+    modelMatrix.scale(0.75, 0.5, 0.75);
+    
+    modelMatrix.rotate(-135,0.0,1.0,0.0);
+   
+
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+   
 }
 
 function drawbox(gl, u_ModelMatrix, u_NormalMatrix, n) {
