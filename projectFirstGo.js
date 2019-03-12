@@ -2,17 +2,20 @@
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
-  'attribute vec4 a_Normal;\n' +        // Normal
+  'attribute vec4 a_Normal;\n' + 
+ // 'attribute vec2 a_TexCoords;\n' +       // Normal
   'uniform mat4 u_ModelMatrix;\n' +
+  'uniform mat4 u_MvpMatrix;\n' +
   'uniform mat4 u_NormalMatrix;\n' +
   'uniform mat4 u_ViewMatrix;\n' +
   'uniform mat4 u_ProjMatrix;\n' +
   'uniform vec3 u_LightColor;\n' +     // Light color
   'uniform vec3 u_LightDirection;\n' + // Light direction (in the world coordinate, normalized)
   'varying vec4 v_Color;\n' +
+ // 'varying vec2 v_TexCoords;\n' +
   'uniform bool u_isLighting;\n' +
   'void main() {\n' +
-  '  gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;\n' +
+  '  gl_Position =u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;\n' +
   '  if(u_isLighting)\n' + 
   '  {\n' +
   '     vec3 normal = normalize((u_NormalMatrix * a_Normal).xyz);\n' +
@@ -20,6 +23,7 @@ var VSHADER_SOURCE =
         // Calculate the color due to diffuse reflection
   '     vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n' +
   '     v_Color = vec4(diffuse, a_Color.a);\n' +  '  }\n' +
+ // '     v_TexCoords = a_TexCoords;\n' +
   '  else\n' +
   '  {\n' +
   '     v_Color = a_Color;\n' +
@@ -34,6 +38,12 @@ var FSHADER_SOURCE =
   'varying vec4 v_Color;\n' +
   'void main() {\n' +
   '  gl_FragColor = v_Color;\n' +
+  /*'  if (u_UseTextures) {\n' +
+  '     vec4 TexColor = texture2D(u_Sampler, v_TexCoords);\n' +
+  '     diffuse = u_LightColor * TexColor.rgb * nDotL * 1.2;\n' +
+  '  } else {\n' +
+  '     diffuse = u_LightColor * v_Color.rgb * nDotL;\n' +
+  '  }\n' +*/
   '}\n';
 
 var modelMatrix = new Matrix4(); // The model matrix
@@ -154,6 +164,55 @@ var lightGreyColours=new Float32Array([
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7
   ]);
+function loadTexture(gl, url) {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Because images have to be download over the internet
+  // they might take a moment until they are ready.
+  // Until then put a single pixel in the texture so we can
+  // use it immediately. When the image has finished downloading
+  // we'll update the texture with the contents of the image.
+  const level = 0;
+  const internalFormat = gl.RGBA;
+  const width = 1;
+  const height = 1;
+  const border = 0;
+  const srcFormat = gl.RGBA;
+  const srcType = gl.UNSIGNED_BYTE;
+  const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                width, height, border, srcFormat, srcType,
+                pixel);
+
+  const image = new Image();
+  image.onload = function() {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                  srcFormat, srcType, image);
+
+    // WebGL1 has different requirements for power of 2 images
+    // vs non power of 2 images so check if the image is a
+    // power of 2 in both dimensions.
+    if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+       // Yes, it's a power of 2. Generate mips.
+       gl.generateMipmap(gl.TEXTURE_2D);
+    } else {
+       // No, it's not a power of 2. Turn off mips and set
+       // wrapping to clamp to edge
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    }
+  };
+  image.src = url;
+
+  return texture;
+}
+
+function isPowerOf2(value) {
+  return (value & (value - 1)) == 0;
+}
 function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
@@ -578,6 +637,7 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
   modelMatrix = popMatrix();
 //black beam
 pushMatrix(modelMatrix);
+
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(-2.6, 0.5, 0.9);  // Translation
     modelMatrix.rotate(70,0.0,1.0,0.0);
@@ -887,6 +947,16 @@ pushMatrix(modelMatrix);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
 
   modelMatrix = popMatrix();
+  //base block
+  pushMatrix(modelMatrix);
+  
+  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(0.0,-2.5,0.0);
+    modelMatrix.scale(15.0,3.0,8.0);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
   //traffic light 2 stand
   /*pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
@@ -917,19 +987,21 @@ pushMatrix(modelMatrix);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top right wheel
-  pushMatrix(modelMatrix);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  for(i=0;i<90;i=i+3){
+    pushMatrix(modelMatrix);
+    if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
     modelMatrix.translate(carXPos+0.35,carZPos-0.35, carYPos-0.65); 
     modelMatrix.scale(0.15, 0.3, 0.3); // Scale
-    
+    modelMatrix.rotate(i,1.0,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
-  modelMatrix = popMatrix();
+    modelMatrix = popMatrix();
   //top left
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(carXPos-0.35,carZPos-0.35, carYPos-0.65); 
     modelMatrix.scale(0.15, 0.3, 0.3); // Scale
-    
+    modelMatrix.rotate(i,1.0,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //bottom left
@@ -937,7 +1009,7 @@ pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(carXPos-0.35,carZPos-0.35, carYPos+0.65); 
     modelMatrix.scale(0.15, 0.3, 0.3); // Scale
-    
+    modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //bottom right
@@ -945,9 +1017,10 @@ pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(carXPos+0.35,carZPos-0.35, carYPos+0.65); 
     modelMatrix.scale(0.15, 0.3, 0.3); // Scale
-    
+    modelMatrix.rotate(i,1.0,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+}
   //car roof
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
@@ -1004,51 +1077,61 @@ pushMatrix(modelMatrix);
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  for(i=0;i<90;i=i+5){
   //lorry 1st back right tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-1.2); 
     
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1.0,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+
   //lorry 2nd back tire
+  
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-0.5); 
     
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+
   //lorry 1st back left tire
+  
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-1.2); 
     
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+
   //lorry 2nd back right tire
+  
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-0.5); 
     
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+
   //lorry front left tire
+  
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY+1.5); 
     
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1,0,0);   
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+}
   //lorry front left tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
