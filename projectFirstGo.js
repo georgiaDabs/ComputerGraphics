@@ -102,6 +102,14 @@ var orangeColours=new Float32Array([
 1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0,
 1,0.645,0,1,0.645,0,1,0.645,0,1,0.645,0
   ]);
+var greyWindowColours=new Float32Array([
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,
+  0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68,0.52,0.52,0.68
+  ]);
 var greenColours=new Float32Array([
   0,1,0,0,1,0,0,1,0,0,1,0,
   0,1,0,0,1,0,0,1,0,0,1,0,
@@ -584,16 +592,214 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
     modelMatrix.scale(4.0, 3.0, 2.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-
-  // left block
-  pushMatrix(modelMatrix);
-    modelMatrix.translate(-1.0, 0.5, -2.0);  // Translation
+    var hmiX=-3.25;
+    var hmiY=-2.95;
+    var hmiZ=1.0;
+    //door
+    pushMatrix(modelMatrix);
+    if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.75, hmiZ-1.3, hmiY+1.6);  // Translation
     
-    modelMatrix.scale(6.0, 4.0, 2.0); // Scale
+    modelMatrix.scale(0.01, 1.0, 0.5); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  // hanging block
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX, hmiZ+0.6, hmiY-2.5);  // Translation
+    
+    modelMatrix.scale(1.5, 2.3, 2.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+//main block
+pushMatrix(modelMatrix);
+    modelMatrix.translate(hmiX, hmiZ, hmiY);  // Translation
+    
+    modelMatrix.scale(1.5, 3.5, 4.0); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+// long side black beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-0.6, hmiY-0.8);  // Translation
+    modelMatrix.scale(0.05, 0.2, 5.5); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //first MNI vertcal beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.15, hmiY-2.0);  // Translation
+    modelMatrix.scale(0.05, 1.2, 0.2); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //second MNI vertcal beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.15, hmiY-0.4);  // Translation
+    modelMatrix.scale(0.05, 1.2, 0.2); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //third MNI vertcal beam
 
-
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.15, hmiY+1.2);  // Translation
+    modelMatrix.scale(0.05, 1.2, 0.2); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+  //deep beam
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.55, hmiY-0.4);  // Translation
+    modelMatrix.scale(0.05, 0.4, 3.2); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+  //window futhest left
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.0, hmiY-1.55);  // Translation
+    modelMatrix.scale(0.05, 0.55, 0.6); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //window second left
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.0, hmiY-0.85);  // Translation
+    modelMatrix.scale(0.05, 0.55, 0.6); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //window futhest right
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.0, hmiY+0.75);  // Translation
+    modelMatrix.scale(0.05, 0.55, 0.6); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    var stickyX=hmiX-0.85;
+    var stickyY=hmiY-2.1;
+    //left sticky out bit
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(stickyX, hmiZ, stickyY);  // Translation
+    modelMatrix.scale(0.2, 1.1, 0.9); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    pushMatrix(modelMatrix);
+    
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(stickyX-0.11, hmiZ-0.3, stickyY);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    pushMatrix(modelMatrix);
+    //sticky bit upper window
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(stickyX-0.11, hmiZ+0.15, stickyY);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    
+    //diagonal 1
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.75, hmiZ, hmiY-2.52);  // Translation
+    modelMatrix.rotate(45,0.0,1.0,0.0);
+    modelMatrix.scale(0.3, 1.1, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //diagonal 2
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.75, hmiZ, hmiY-1.62);  // Translation
+    modelMatrix.rotate(45,0.0,1.0,0.0);
+    modelMatrix.scale(0.3, 1.1, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //right sticky out bit
+     stickyX=hmiX-0.85;
+     stickyY=hmiY+0.9
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(stickyX, hmiZ, stickyY);  // Translation
+    modelMatrix.scale(0.2, 1.1, 0.9); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //diagonal 1
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.75, hmiZ, hmiY+1.32);  // Translation
+    modelMatrix.rotate(45,0.0,1.0,0.0);
+    modelMatrix.scale(0.3, 1.1, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //diagonal 2
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.75, hmiZ, hmiY+0.42);  // Translation
+    modelMatrix.rotate(45,0.0,1.0,0.0);
+    modelMatrix.scale(0.3, 1.1, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //sticky bit window
+    pushMatrix(modelMatrix);
+    
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(stickyX-0.11, hmiZ-0.3, stickyY);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    pushMatrix(modelMatrix);
+    //sticky bit upper window
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(stickyX-0.11, hmiZ+0.15, stickyY);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    //central windows
+    //black border
+    pushMatrix(modelMatrix);
+    
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.754, hmiZ, hmiY-0.6);  // Translation
+    modelMatrix.scale(0.05, 1.1, 0.8); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    pushMatrix(modelMatrix);
+    //top window
+    pushMatrix(modelMatrix);
+    
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.755, hmiZ-0.3, hmiY-0.6);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    pushMatrix(modelMatrix);
+    //sticky bit upper window
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(hmiX-0.755, hmiZ+0.15, hmiY-0.6);  // Translation
+    modelMatrix.scale(0.05, 0.4, 0.7); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
+    
+    //window second right
+    
+    pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.755, hmiZ-1.0, hmiY+0.05);  // Translation
+    modelMatrix.scale(0.05, 0.55, 0.6); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+    modelMatrix = popMatrix();
  // first diagonal
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
@@ -610,6 +816,177 @@ function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
     modelMatrix.scale(0.2,0.2,1.2);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  var centreOfWindowX=hmiX-0.751;
+  var centreOfWindowY=hmiY-0.6;
+  var centreOfWindowZ=hmiZ+1.2;
+  // top left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // top right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //window ledge
+   pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.5, centreOfWindowY);  // Translation
+    
+    modelMatrix.scale(0.05, 0.1, 0.72); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //right top window
+  centreOfWindowY=hmiY+0.9;
+  // top left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // top right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //window ledge
+   pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.5, centreOfWindowY);  // Translation
+    
+    modelMatrix.scale(0.05, 0.1, 0.72); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //left top window
+  centreOfWindowY=hmiY-2.1;
+  // top left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // top right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ+0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom left window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY-0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  // bottom right window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.24, centreOfWindowY+0.19);  // Translation
+    
+    modelMatrix.scale(0.05, 0.44, 0.34); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //window ledge
+   pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreOfWindowX, centreOfWindowZ-0.5, centreOfWindowY);  // Translation
+    
+    modelMatrix.scale(0.05, 0.1, 0.72); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //hmi roof
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX, hmiZ+1.75, hmiY-1.0);  // Translation
+    modelMatrix.rotate(45,0.0,0.0,1.0);
+    modelMatrix.scale(1.15, 1.15, 5.99); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //chimmney
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX, hmiZ+1.0, hmiY+2.0);  // Translation
+    modelMatrix.scale(0.4, 3.5, 0.2); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //chimney left
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX-0.1, hmiZ+1.2, hmiY+2.0);  // Translation
+    modelMatrix.scale(0.05, 3.5, 0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //chimney centre
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX, hmiZ+1.2, hmiY+2.0);  // Translation
+    modelMatrix.scale(0.05, 3.5, 0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //chimney right
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX+0.1, hmiZ+1.2, hmiY+2.0);  // Translation
+    modelMatrix.scale(0.05, 3.5, 0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black side
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(hmiX, hmiZ, hmiY+2.01);  // Translation
+    modelMatrix.scale(1.5, 3.5, 0.01); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  
   // second diagonal
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
@@ -648,7 +1025,7 @@ var centreY=1.01;
 var centreX=-0.5;
 var centreZ=0.0;
 //big window
-pushMatrix(modelMatrix);
+/*pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(centreX, centreZ-0.3, centreY);  // Translation
     
@@ -671,9 +1048,9 @@ pushMatrix(modelMatrix);
     modelMatrix.scale(0.2,0.2,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-centreX=centreX+2.0;
+centreX=centreX+2.0;*/
   //big window
-pushMatrix(modelMatrix);
+/*pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(centreX, centreZ-0.3, centreY);  // Translation
     
@@ -695,71 +1072,891 @@ pushMatrix(modelMatrix);
     
     modelMatrix.scale(0.2,0.2,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
-  modelMatrix = popMatrix();
+  modelMatrix = popMatrix();*/
 centreY=1.7;
 centreX=-2.1;
 var windowRotation=-20;
   //big window
 pushMatrix(modelMatrix);
   modelMatrix.rotate(windowRotation, 0,1,0);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(centreX, centreZ-0.3, centreY);  // Translation
     
-    modelMatrix.scale(0.5,0.5,0.05); // Scale
+    modelMatrix.scale(0.8,0.5,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top left window
   pushMatrix(modelMatrix);
   modelMatrix.rotate(windowRotation, 0,1,0);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(centreX-0.15, centreZ+0.1, centreY);  // Translation
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.2, centreZ+0.13, centreY);  // Translation
     
-    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    modelMatrix.scale(0.35,0.3,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top right window
   pushMatrix(modelMatrix);
 
   modelMatrix.rotate(windowRotation, 0,1,0);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(centreX+0.15, centreZ+0.1, centreY);  // Translation
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.2, centreZ+0.13, centreY);  // Translation
     
-    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    modelMatrix.scale(0.35,0.3,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  centreY=3.8;
-centreX=-0.8;
-windowRotation=-80;
+  //bottom beam
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.7, centreY);  // Translation
+    
+    modelMatrix.scale(0.9,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  centreY=3.5;
+centreX=-1.8;
+windowRotation=-70;
   //big window
 pushMatrix(modelMatrix);
   modelMatrix.rotate(windowRotation, 0,1,0);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(centreX, centreZ-0.3, centreY);  // Translation
     
-    modelMatrix.scale(0.5,0.5,0.05); // Scale
+    modelMatrix.scale(0.8,0.5,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top left window
   pushMatrix(modelMatrix);
   modelMatrix.rotate(windowRotation, 0,1,0);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(centreX-0.15, centreZ+0.1, centreY);  // Translation
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.2, centreZ+0.13, centreY);  // Translation
     
-    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    modelMatrix.scale(0.35,0.3,0.05); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top right window
   pushMatrix(modelMatrix);
-  
+
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.2, centreZ+0.13, centreY);  // Translation
+    
+    modelMatrix.scale(0.35,0.3,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //bottom beam
+  pushMatrix(modelMatrix);
   modelMatrix.rotate(windowRotation, 0,1,0);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(centreX+0.15, centreZ+0.1, centreY);  // Translation
+    modelMatrix.translate(centreX, centreZ-0.7, centreY);  // Translation
     
-    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    modelMatrix.scale(0.9,0.1,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  centreY=2.8;
+centreX=-1.9;
+windowRotation=-50;
+  //big window
+pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.25, centreY);  // Translation
+    
+    modelMatrix.scale(0.8,0.4,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top  window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+0.13, centreY);  // Translation
+    
+    modelMatrix.scale(0.7,0.3,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //bottom beam
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.7, centreY);  // Translation
+    
+    modelMatrix.scale(0.9,0.1,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY);  // Translation
+    
+    modelMatrix.scale(0.8,0.5,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.1,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window right white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.1,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window centre white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.5,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+0.83, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+0.94, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.05, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.17, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+0.83, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+0.94, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.05, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.17, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  windowRotation=0;
+  centreX=1.3;
+  centreY=1.01;
+  //zaps side window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY);  // Translation
+    
+    modelMatrix.scale(0.8,0.5,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.1,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window right white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.1,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window centre white
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY+0.001);  // Translation
+    
+    modelMatrix.scale(0.5,0.45,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+0.83, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+0.94, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.05, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.325, centreZ+1.17, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+0.83, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+0.94, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.05, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.325, centreZ+1.17, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.076,0.096,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.82, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+0.91, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.0, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.09, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zaps side window left bottom black
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ+1.18, centreY+0.002);  // Translation
+    
+    modelMatrix.scale(0.138,0.076,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  var centreSimpleX=-1.5;
+  var centreSimpleY=1.01;
+  var centreSimpleZ=1.0;
+  //zap simple window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX, centreSimpleZ, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.36,0.44,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window inner white
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX, centreSimpleZ, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.32,0.4,0.06); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+//zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  var centreSimpleX=-0.5;
+  var centreSimpleY=1.01;
+  var centreSimpleZ=1.0;
+  //zap simple window
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX, centreSimpleZ, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.36,0.44,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window inner white
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', whiteColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX, centreSimpleZ, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.32,0.4,0.06); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ+0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+//zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ+0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ-0.05, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.12, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX-0.04, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.12, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //zap simple window pane
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreSimpleX+0.04, centreSimpleZ-0.15, centreSimpleY);  // Translation
+    
+    modelMatrix.scale(0.06,0.08,0.07); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //flatroad
   pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(-7.0, -1.0, 0.0);  
     modelMatrix.scale(5.0, 0.2, 9.0); // Scale
 
@@ -1199,36 +2396,187 @@ pushMatrix(modelMatrix);
   //black pillar
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(-1.0,-0.25, 1.0); 
+    modelMatrix.translate(-1.75,-0.25, 1.0); 
     
-    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
-    
-    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
-  modelMatrix = popMatrix();
-  //black pillar
-  pushMatrix(modelMatrix);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(0.0,-0.25, 1.0); 
-    
-    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //black pillar
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(1.0,-0.25, 1.0); 
+    modelMatrix.translate(-0.95,-0.25, 1.0); 
     
-    modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-0.4,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-0.2,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.6,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(1.15,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //black pillar
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(1.35,-0.25, 1.0); 
+    
+    modelMatrix.scale(0.1, 1.5, 0.1); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //paddys front left window
+  centreY=1.001;
+centreX=-1.35;
+windowRotation=0;
+  //big window
+pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.25, centreY);  // Translation
+    
+    modelMatrix.scale(0.6,0.4,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top left window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.25,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top right window
+  pushMatrix(modelMatrix);
+
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.25,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  centreY=1.001;
+centreX=1.65;
+windowRotation=0;
+  //big window
+pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.2, centreY);  // Translation
+    
+    modelMatrix.scale(0.45,0.3,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top left window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.12, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top right window
+  pushMatrix(modelMatrix);
+
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.12, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.2,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  
+  //paddys front left window
+  centreY=1.001;
+centreX=0.2;
+windowRotation=0;
+  //big window
+pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX, centreZ-0.2, centreY);  // Translation
+    
+    modelMatrix.scale(0.6,0.3,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top left window
+  pushMatrix(modelMatrix);
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX-0.15, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.25,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //top right window
+  pushMatrix(modelMatrix);
+
+  modelMatrix.rotate(windowRotation, 0,1,0);
+  if (!initArrayBuffer(gl, 'a_Color', greyWindowColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(centreX+0.15, centreZ+0.1, centreY);  // Translation
+    
+    modelMatrix.scale(0.25,0.2,0.05); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+
+  //end black pillar
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(2.0,-0.25, 1.0); 
     
     modelMatrix.scale(0.2, 1.5, 0.2); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //front right door
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(0.875,-0.3, 1.0); 
+    
+    modelMatrix.scale(0.4, 1.0, 0.001); // Scale
+    
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+  //front left door
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    modelMatrix.translate(-0.675,-0.3, 1.0); 
+    
+    modelMatrix.scale(0.4, 1.0, 0.001); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
@@ -1245,9 +2593,9 @@ pushMatrix(modelMatrix);
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     modelMatrix.rotate(45,1.0,0.0,0.0);
-    modelMatrix.translate(-0.2,1.1,-1.1); 
+    modelMatrix.translate(0.0,1.1,-1.1); 
 
-    modelMatrix.scale(4.5, 1.5, 1.5); // Scale
+    modelMatrix.scale(4.0, 1.5, 1.5); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
@@ -1255,8 +2603,8 @@ pushMatrix(modelMatrix);
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Position', pyramidVertices, 3, gl.FLOAT)) return -1;
   if (!initArrayBuffer(gl, 'a_Color', pyramidColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(-2.45,2.0,0.0); 
-    modelMatrix.scale(0.75, 0.5, 0.75);
+    modelMatrix.translate(-2.0,2.0,0.0); 
+    modelMatrix.scale(1.2, 0.6, 0.8);
     
     modelMatrix.rotate(-135,0.0,1.0,0.0);
    
