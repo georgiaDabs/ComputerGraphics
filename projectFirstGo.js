@@ -45,7 +45,10 @@ var FSHADER_SOURCE =
   '     diffuse = u_LightColor * v_Color.rgb * nDotL;\n' +
   '  }\n' +*/
   '}\n';
-
+var carForwards=true;
+var carXPos=-7.5;
+var lorryX=-5.5;
+var lorryForwards=true;
 var modelMatrix = new Matrix4(); // The model matrix
 var viewMatrix = new Matrix4();  // The view matrix
 var projMatrix = new Matrix4();  // The projection matrix
@@ -180,6 +183,11 @@ var lightGreyColours=new Float32Array([
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7
   ]);
+
+
+
+
+
 function loadTexture(gl, url) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -286,7 +294,52 @@ function main() {
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
 
+  setInterval(function (){
+  if(signRotate>235){
+        signClockwise=true;
 
+      }else if(signRotate<135){
+        signClockwise=false;
+      }
+      if(signClockwise){
+        signRotate=(signRotate-ANGLE_STEP)%360;
+      }else{
+        signRotate=(signRotate+ANGLE_STEP)%360;
+      }
+      //||(!(lorryY==2.0&&(lorryForwards==false)&&(greenOn==false)))
+      if((!((lorryY==0)&&(lorryForwards==true)&&(greenOn==false)))&&(!(lorryY==3.0&&(lorryForwards==false)&&(greenOn==false)))){
+      if(lorryY>5.0){
+        lorryForwards=false;
+        lorryX=-7.5;
+      }
+      if(lorryY<-2.0){
+        lorryX=-5.5
+        lorryForwards=true;
+      }
+      if(lorryForwards==true){
+      lorryY=lorryY+0.5;
+    }else{
+      lorryY=lorryY-0.5;
+      
+    }
+  }
+  if((!((carDrive==0)&&(carForwards==true)&&(greenOn==false)))&&(!(carDrive==2.0&&(carForwards==false)&&(greenOn==false)))){
+      if(carDrive<-6.0){
+        carForwards=false;
+        carXPos=-5.5;
+      }
+      if(carDrive>2.0){
+        carForwards=true;
+        carXPos=-7.5
+      }
+      if(carForwards==true){
+      carDrive=carDrive-0.5;
+    }else{
+      carDrive=carDrive+0.5;
+    }  
+    }
+    draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting);
+},1000);
   document.onkeydown = function(ev){
     keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatrix);
   };
@@ -2290,8 +2343,7 @@ pushMatrix(modelMatrix);
   //traffic light 2 stand
   
   //car body
-  var carXPos=-7.5;
-  var carYPos=4.5+carDrive;
+    var carYPos=4.5+carDrive;
   var carZPos=-0.4;
   pushMatrix(modelMatrix);
     if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
@@ -2338,12 +2390,16 @@ pushMatrix(modelMatrix);
   //car roof
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
-    modelMatrix.translate(carXPos,carZPos+0.4, carYPos+0.2); 
-    modelMatrix.scale(1.0, 0.4, 0.8); // Scale
     
+    if(carForwards==true){
+    modelMatrix.translate(carXPos,carZPos+0.4, carYPos+0.2); 
+    }else{
+      modelMatrix.translate(carXPos,carZPos+0.4, carYPos-0.2); 
+    }
+    modelMatrix.scale(1.0, 0.4, 0.8); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  var lorryX=-5.5;
+  
   
   var lorryZ=0.2;
   //lorryboddy
@@ -2358,8 +2414,11 @@ pushMatrix(modelMatrix);
   //lorry front bit
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX,lorryZ-0.25, lorryY+1.9); 
-    
+    }else{
+      modelMatrix.translate(lorryX,lorryZ-0.25, lorryY-1.9); 
+    }
     modelMatrix.scale(0.8, 1.0, 0.8); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2367,8 +2426,11 @@ pushMatrix(modelMatrix);
   //lorry left window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX-0.41,lorryZ, lorryY+1.9); 
-    
+    }else{
+      modelMatrix.translate(lorryX-0.41,lorryZ, lorryY-1.9); 
+    }
     modelMatrix.scale(0.05, 0.3, 0.6); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2376,8 +2438,11 @@ pushMatrix(modelMatrix);
   //lorry right window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX+0.41,lorryZ, lorryY+1.9); 
-    
+    }else{
+      modelMatrix.translate(lorryX+0.41,lorryZ, lorryY-1.9);
+    }
     modelMatrix.scale(0.05, 0.3, 0.6); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2385,8 +2450,11 @@ pushMatrix(modelMatrix);
   //lorry front room
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX,lorryZ, lorryY+2.3); 
-    
+    }else{
+      modelMatrix.translate(lorryX,lorryZ, lorryY-2.3); 
+    }
     modelMatrix.scale(0.7, 0.3, 0.05); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2395,8 +2463,11 @@ pushMatrix(modelMatrix);
   //lorry 1st back right tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-1.2); 
-    
+    }else{
+      modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY+1.2); 
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     modelMatrix.rotate(i,1.0,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2406,8 +2477,11 @@ pushMatrix(modelMatrix);
   
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-0.5); 
-    
+    }else{
+       modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY+0.5); 
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2417,8 +2491,12 @@ pushMatrix(modelMatrix);
   
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-1.2); 
-    
+    }else{
+modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+1.2); 
+
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2428,8 +2506,11 @@ pushMatrix(modelMatrix);
   
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-0.5); 
-    
+    }else{
+      modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+0.5); 
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     modelMatrix.rotate(i,1,0,0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2439,8 +2520,11 @@ pushMatrix(modelMatrix);
   
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY+1.5); 
-    
+    }else{
+      modelMatrix.translate(lorryX-0.31,lorryZ-0.75, lorryY-1.5); 
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     modelMatrix.rotate(i,1,0,0);   
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2449,36 +2533,49 @@ pushMatrix(modelMatrix);
   //lorry front left tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+  if(lorryForwards==true){
     modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+1.5); 
-    
+    }else{
+      modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-1.5); 
+    }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  //left window
+  //car left window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(carForwards==true){
     modelMatrix.translate(carXPos-0.505,carZPos+0.4, carYPos+0.2); 
-    
+    }else{
+modelMatrix.translate(carXPos-0.505,carZPos+0.4, carYPos-0.2); 
+
+    }
     modelMatrix.scale(0.01, 0.2, 0.6); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
 
-//right window
+//car right window
 pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(carForwards==true){
     modelMatrix.translate(carXPos+0.505,carZPos+0.4, carYPos+0.2); 
-    
+    }else{
+      modelMatrix.translate(carXPos+0.505,carZPos+0.4, carYPos-0.2); 
+    }
     modelMatrix.scale(0.01, 0.2, 0.6); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  //front window
+  //car front window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
+  if(carForwards==true){
     modelMatrix.translate(carXPos,carZPos+0.4, carYPos-0.205); 
-    
+    }else{
+      modelMatrix.translate(carXPos,carZPos+0.4, carYPos+0.205); 
+    }
     modelMatrix.scale(0.8, 0.2, 0.01); // Scale
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
