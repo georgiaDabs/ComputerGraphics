@@ -86,6 +86,14 @@ var orangeOn=false;
 var redOn=false;
 var lorryY=-2.0;
 var greenOn=true;
+var roadColours=new Float32Array([
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,
+  0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464,0.46,0.453,0.464
+  ]);
 var blueColours=new Float32Array([
   0,0,1,0,0,1,0,0,1,0,0,1,
   0,0,1,0,0,1,0,0,1,0,0,1,
@@ -239,7 +247,7 @@ function main() {
   }
 
   // Set clear color and enable hidden surface removal
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearColor(0.883, 0.996, 0.992, 1.0);
   gl.enable(gl.DEPTH_TEST);
 
   // Clear color and depth buffer
@@ -262,9 +270,10 @@ function main() {
     console.log('Failed to Get the storage locations of u_ModelMatrix, u_ViewMatrix, and/or u_ProjMatrix');
     return;
   }
+  var lightingVar=1.0;
 
   // Set the light color (white)
-  gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
+  gl.uniform3f(u_LightColor, lightingVar, lightingVar, lightingVar);
   // Set the light direction (in the world coordinate)
   var lightDirection = new Vector3([0.5, 3.0, 4.0]);
   lightDirection.normalize();     // Normalize
@@ -378,6 +387,7 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
         orangeOn=false;
       }
       break;
+      
     default: return; // Skip drawing at no effective action
   }
 
@@ -1956,7 +1966,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //flatroad
   pushMatrix(modelMatrix);
-  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+  if (!initArrayBuffer(gl, 'a_Color', roadColours, 3, gl.FLOAT)) return -1;
     modelMatrix.translate(-7.0, -1.0, 0.0);  
     modelMatrix.scale(5.0, 0.2, 9.0); // Scale
 
@@ -2144,6 +2154,129 @@ pushMatrix(modelMatrix);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
 
   modelMatrix = popMatrix();
+  
+  //traffic light 1 stand
+  var trafficX=-8.5;
+  var trafficZ=0.0;
+  var trafficY=3.5;
+  //base block
+  pushMatrix(modelMatrix);
+  
+  if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX-0.4,trafficZ-1.0,trafficY+0.2);
+    modelMatrix.scale(1.0,0.5,1.0);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ,trafficY);
+    modelMatrix.scale(0.2,2.0,0.2);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //trffic light 1 body
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY);
+    modelMatrix.scale(0.4,1.0,0.4);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //red light
+  pushMatrix(modelMatrix);
+    var redTraffic=new Float32Array([]);
+    if(redOn){
+      redTraffic=redColours;
+    } else{
+      redTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', redTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.8,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //red light
+  pushMatrix(modelMatrix);
+    var redTraffic=new Float32Array([]);
+    if(redOn){
+      redTraffic=redColours;
+    } else{
+      redTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', redTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.8,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+
+  //orange light
+  pushMatrix(modelMatrix);
+  var orangeTraffic=new Float32Array([]);
+    if(orangeOn){
+      orangeTraffic=orangeColours;
+    } else{
+      orangeTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', orangeTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //orange light
+  pushMatrix(modelMatrix);
+  var orangeTraffic=new Float32Array([]);
+    if(orangeOn){
+      orangeTraffic=orangeColours;
+    } else{
+      orangeTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', orangeTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.5,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //green light
+  pushMatrix(modelMatrix);
+  var greenTraffic=new Float32Array([]);
+    if(greenOn){
+      greenTraffic=greenColours;
+    } else{
+      greenTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', greenTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.2,trafficY+0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
+  //green light
+  pushMatrix(modelMatrix);
+  var greenTraffic=new Float32Array([]);
+    if(greenOn){
+      greenTraffic=greenColours;
+    } else{
+      greenTraffic=blackColours;
+    }
+  if (!initArrayBuffer(gl, 'a_Color', greenTraffic, 3, gl.FLOAT)) return -1;
+    
+    modelMatrix.translate(trafficX,trafficZ+0.2,trafficY-0.2);
+    modelMatrix.scale(0.25,0.25,0.05);
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+
+  modelMatrix = popMatrix();
   //base block
   pushMatrix(modelMatrix);
   
@@ -2155,23 +2288,7 @@ pushMatrix(modelMatrix);
 
   modelMatrix = popMatrix();
   //traffic light 2 stand
-  /*pushMatrix(modelMatrix);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    
-    modelMatrix.translate(-5.0,0.0,1.8);
-    modelMatrix.scale(0.2,2.0,0.2);
-    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
-
-  modelMatrix = popMatrix();
-  //traffic light 2 body
-  pushMatrix(modelMatrix);
-  if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
-    
-    modelMatrix.translate(-5.0,0.5,1.8);
-    modelMatrix.scale(0.4,1.0,0.4);
-    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
-
-  modelMatrix = popMatrix();*/
+  
   //car body
   var carXPos=-7.5;
   var carYPos=4.5+carDrive;
@@ -2228,7 +2345,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   var lorryX=-5.5;
   
-  var lorryZ=0.0;
+  var lorryZ=0.2;
   //lorryboddy
 pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', lightGreyColours, 3, gl.FLOAT)) return -1;
