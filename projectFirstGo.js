@@ -59,6 +59,9 @@ var g_xAngle = 0.0;    // The rotation x angle (degrees)
 var g_yAngle = 0.0;    // The rotation y angle (degrees)
 var signRotate=180.0;
 var carDrive=0.0;
+var carYPos=0.0;
+var signOn=true;
+var lightingVar=1.0;
 var perspective=40;
 var signClockwise=true;
 var zoom=1.0;
@@ -183,7 +186,15 @@ var lightGreyColours=new Float32Array([
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,
 0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7,0.8,0.8,0.7
   ]);
+var stoneColours=new Float32Array([
+0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,
 
+0.594,0.398,0.199,0.594,0.398,0.199,0.594,0.398,0.199,0.594,0.398,0.199,
+0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,
+0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,
+0.594,0.398,0.199,0.594,0.398,0.199,0.594,0.398,0.199,0.594,0.398,0.199,
+0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457,0.652,0.652,0.457
+]);
 
 
 
@@ -278,7 +289,7 @@ function main() {
     console.log('Failed to Get the storage locations of u_ModelMatrix, u_ViewMatrix, and/or u_ProjMatrix');
     return;
   }
-  var lightingVar=1.0;
+   lightingVar=1.0;
 
   // Set the light color (white)
   gl.uniform3f(u_LightColor, lightingVar, lightingVar, lightingVar);
@@ -295,19 +306,49 @@ function main() {
   gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
 
   setInterval(function (){
-  if(signRotate>235){
-        signClockwise=true;
-
-      }else if(signRotate<135){
-        signClockwise=false;
-      }
-      if(signClockwise){
-        signRotate=(signRotate-ANGLE_STEP)%360;
+    var difference=0.0;
+    var carStop=false;
+    var lorryStop=false;
+    if(carForwards==lorryForwards){
+      difference=10.0;
+      carStop=false;
+      lorryStop=false;
+    }else{
+      difference=(lorryY-carYPos);
+      if(Math.abs(difference)<3.0){
+        if(lorryForwards==true&&lorryY>carYPos){
+          carStop=true;
+          console.log("stopping car");
+        }else if(lorryForwards==true&&lorryY<carYPos){
+          lorryStop=true;
+          console.log("stopping lorry");
+        }else if(lorryForwards==false&&lorryY>carYPos){
+          console.log("stopping lorry");
+          lorryStop=true;
+        }else if(lorryForwards==false&&lorryY<carYPos){
+          carStop=true;
+          console.log("stopping car");
+        }
       }else{
-        signRotate=(signRotate+ANGLE_STEP)%360;
+        carStop=false;
+        lorryStop=false;
       }
+    }
+    if(signOn==true){
+    if(signRotate>235){
+        signClockwise=true;
+    }else if(signRotate<135){
+        signClockwise=false;
+    }
+    if(signClockwise){
+      signRotate=(signRotate-ANGLE_STEP)%360;
+    }else{
+      signRotate=(signRotate+ANGLE_STEP)%360;
+    }
+  }
       //||(!(lorryY==2.0&&(lorryForwards==false)&&(greenOn==false)))
-      if((!((lorryY==0)&&(lorryForwards==true)&&(greenOn==false)))&&(!(lorryY==3.0&&(lorryForwards==false)&&(greenOn==false)))){
+      
+    if((!((lorryY==0)&&(lorryForwards==true)&&(greenOn==false)))&&(!(lorryY==3.0&&(lorryForwards==false)&&(greenOn==false)))){
       if(lorryY>5.0){
         lorryForwards=false;
         lorryX=-7.5;
@@ -316,14 +357,16 @@ function main() {
         lorryX=-5.5
         lorryForwards=true;
       }
-      if(lorryForwards==true){
-      lorryY=lorryY+0.5;
-    }else{
-      lorryY=lorryY-0.5;
+      if(lorryStop==false){
+        if(lorryForwards==true){
+          lorryY=lorryY+0.5;
+        }else{
+          lorryY=lorryY-0.5;
       
+        }
+      }
     }
-  }
-  if((!((carDrive==0)&&(carForwards==true)&&(greenOn==false)))&&(!(carDrive==2.0&&(carForwards==false)&&(greenOn==false)))){
+  if((!((carDrive==0.0)&&(carForwards==true)&&(greenOn==false)))&&(!(carDrive==4.0&&(carForwards==false)&&(greenOn==false)))){
       if(carDrive<-6.0){
         carForwards=false;
         carXPos=-5.5;
@@ -332,22 +375,25 @@ function main() {
         carForwards=true;
         carXPos=-7.5
       }
-      if(carForwards==true){
-      carDrive=carDrive-0.5;
-    }else{
-      carDrive=carDrive+0.5;
-    }  
+      if(carStop==false){
+        if(carForwards==true){
+
+          carDrive=carDrive-0.5;
+        }else{
+          carDrive=carDrive+0.5;
+        }   
+      }
     }
-    draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting);
+    draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_LightColor);
 },1000);
   document.onkeydown = function(ev){
-    keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatrix);
+    keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatrix, u_LightColor);
   };
 
-  draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting);
+  draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_LightColor);
 }
 
-function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatrix) {
+function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatrix, u_LightColor) {
   switch (ev.keyCode) {
     case 40: // Up arrow key -> the positive rotation of arm1 around the y-axis
       g_xAngle = (g_xAngle + ANGLE_STEP) % 360;
@@ -362,17 +408,9 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
       g_yAngle = (g_yAngle - ANGLE_STEP) % 360;
       break;
     case 71: //rotate signs g
-      if(signRotate>235){
-        signClockwise=true;
-
-      }else if(signRotate<135){
-        signClockwise=false;
-      }
-      if(signClockwise){
-        signRotate=(signRotate-ANGLE_STEP)%360;
-      }else{
-        signRotate=(signRotate+ANGLE_STEP)%360;
-      }
+      if(lightingVar>0){
+      lightingVar=(lightingVar-0.05);
+    }
       break;
     case 82:
     if((lorryY>-2.5)||(greenOn==true)||(lorryY<-3.5)){
@@ -383,17 +421,7 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
       lorryY=lorryY-0.1;
       break;
     case 72://opposit rotate signs h
-      if(signRotate>235){
-        signClockwise=true;
-
-      }else if(signRotate<135){
-        signClockwise=false;
-      }
-      if(signClockwise){
-        signRotate=(signRotate+ANGLE_STEP)%360;
-      }else{
-        signRotate=(signRotate-ANGLE_STEP)%360;
-      }
+      (lightingVar=lightingVar+0.05);
       break;
     case 68://drive car backwards D
 
@@ -406,16 +434,16 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
       carDrive=(carDrive-0.1);
     }
       break;
-    case 73:
+    case 76:
       xCentre=(xCentre+0.1);
       break;
-    case 75:
+    case 74:
       xCentre=(xCentre-0.1);
       break;
-    case 74:
+    case 73:
       yCentre=(yCentre+0.1);
       break;
-    case 76:
+    case 75:
       yCentre=(yCentre-0.1);
       break;
     case 77:
@@ -439,13 +467,19 @@ function keydown(ev, gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_ProjMatri
         redOn=true;
         orangeOn=false;
       }
+    case 83:
+      if(signOn==true){
+        signOn=false;
+      }else{
+        signOn=true;
+      }
       break;
       
     default: return; // Skip drawing at no effective action
   }
 
   // Draw the scene
-  draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting);
+  draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting, u_LightColor);
 }
 function roofVertexBuffer(gl){
   var vertices =new Float32Array([
@@ -613,8 +647,9 @@ function popMatrix() { // Retrieve the matrix from the array
   return g_matrixStack.pop();
 }
 
-function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting) {
+function draw(gl, u_ModelMatrix, u_NormalMatrix, u_isLighting,u_LightColor) {
 
+      gl.uniform3f(u_LightColor, lightingVar, lightingVar, lightingVar);
   // Clear color and depth buffer
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -2033,30 +2068,77 @@ pushMatrix(modelMatrix);
     modelMatrix.scale(1.5, 1.0, 6.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  for(i=1.2;i>-4.3;i=i-0.4){
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', stoneColours, 3, gl.FLOAT)) return -1;
+  
+    modelMatrix.translate(-4.35, -0.745, i);  
+    modelMatrix.scale(0.5, 0.05, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+}
+for(i=1.2;i>-0.5;i=i-0.4){
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', stoneColours, 3, gl.FLOAT)) return -1;
+  
+    modelMatrix.translate(-3.85, -0.745, i);  
+    modelMatrix.scale(0.3, 0.05, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+}
+for(i=1.2;i>-0.5;i=i-0.4){
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', stoneColours, 3, gl.FLOAT)) return -1;
+  
+    modelMatrix.translate(-3.45, -0.745, i);  
+    modelMatrix.scale(0.3, 0.05, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+}
   //nonflatroad
   pushMatrix(modelMatrix);
     if (!initArrayBuffer(gl, 'a_Color', greenyBrownColours, 3, gl.FLOAT)) return -1;
     modelMatrix.rotate(4,0.0,0.0,1.0);
-    modelMatrix.translate(0.5, -1.2, 2.5);  
-    modelMatrix.scale(11.0, 1.0, 3.0); // Scale
+    modelMatrix.translate(-2.5, -1.1, 2.5);  
+    modelMatrix.scale(9.0, 1.0, 3.0); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //non flat curb closest to paddys
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
   modelMatrix.rotate(4,0.0,0.0,1.0);
-    modelMatrix.translate(0.5, -1.0, 1.25);  
-    modelMatrix.scale(10.0, 1.0, 0.5); // Scale
+    modelMatrix.translate(-2.5, -1.05, 1.25);  
+    modelMatrix.scale(9.0, 1.0, 0.5); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  //stones
+  for(i=-4.5;i<2.0;i=i+0.35){
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', stoneColours, 3, gl.FLOAT)) return -1;
+  modelMatrix.rotate(4,0.0,0.0,1.0);
+    modelMatrix.translate(i, -0.55, 1.25);  
+    modelMatrix.scale(0.3, 0.05, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+}
   //non flat curb futher from paddys
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
   modelMatrix.rotate(4,0.0,0.0,1.0);
-    modelMatrix.translate(0.5, -1.0, 3.75);  
-    modelMatrix.scale(11.0, 1.0, 0.5); // Scale
+    modelMatrix.translate(-2.5, -1.05, 3.751);  
+    modelMatrix.scale(9.0, 1.0, 0.5); // Scale
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+  //stone
+  for(i=-4.5;i<2.0;i=i+0.35){
+  pushMatrix(modelMatrix);
+  if (!initArrayBuffer(gl, 'a_Color', stoneColours, 3, gl.FLOAT)) return -1;
+  modelMatrix.rotate(4,0.0,0.0,1.0);
+    modelMatrix.translate(i, -0.55, 3.751);  
+    modelMatrix.scale(0.3, 0.05, 0.3); // Scale
+    drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
+  modelMatrix = popMatrix();
+}
   //front sign
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', greenColours, 3, gl.FLOAT)) return -1;
@@ -2079,6 +2161,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //wood for side sign
   pushMatrix(modelMatrix);
+  //gl.uniform1i(u_isLighting, false); 
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
     
     modelMatrix.translate(-4.0,0.5,-1.0);
@@ -2118,6 +2201,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //red light
   pushMatrix(modelMatrix);
+  gl.uniform1i(u_isLighting, false); 
     var redTraffic=new Float32Array([]);
     if(redOn){
       redTraffic=redColours;
@@ -2133,6 +2217,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //red light
   pushMatrix(modelMatrix);
+  gl.uniform1i(u_isLighting, true); 
     var redTraffic=new Float32Array([]);
     if(redOn){
       redTraffic=redColours;
@@ -2149,6 +2234,7 @@ pushMatrix(modelMatrix);
 
   //orange light
   pushMatrix(modelMatrix);
+  gl.uniform1i(u_isLighting, false); 
   var orangeTraffic=new Float32Array([]);
     if(orangeOn){
       orangeTraffic=orangeColours;
@@ -2186,7 +2272,7 @@ pushMatrix(modelMatrix);
       greenTraffic=blackColours;
     }
   if (!initArrayBuffer(gl, 'a_Color', greenTraffic, 3, gl.FLOAT)) return -1;
-    
+    gl.uniform1i(u_isLighting, false); 
     modelMatrix.translate(trafficX,trafficZ+0.2,trafficY+0.2);
     modelMatrix.scale(0.25,0.25,0.05);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
@@ -2212,9 +2298,9 @@ pushMatrix(modelMatrix);
   var trafficX=-8.5;
   var trafficZ=0.0;
   var trafficY=3.5;
-  //base block
+  //base curb of traffic light
   pushMatrix(modelMatrix);
-  
+  gl.uniform1i(u_isLighting, true); 
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
     
     modelMatrix.translate(trafficX-0.4,trafficZ-1.0,trafficY+0.2);
@@ -2241,6 +2327,7 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //red light
   pushMatrix(modelMatrix);
+  gl.uniform1i(u_isLighting, false); 
     var redTraffic=new Float32Array([]);
     if(redOn){
       redTraffic=redColours;
@@ -2332,18 +2419,18 @@ pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
   //base block
   pushMatrix(modelMatrix);
-  
+  gl.uniform1i(u_isLighting, true); 
   if (!initArrayBuffer(gl, 'a_Color', brownColours, 3, gl.FLOAT)) return -1;
     
-    modelMatrix.translate(0.0,-2.5,0.0);
-    modelMatrix.scale(15.0,3.0,8.0);
+    modelMatrix.translate(-4.0,-2.5,0.0);
+    modelMatrix.scale(12.0,3.0,8.0);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
 
   modelMatrix = popMatrix();
   //traffic light 2 stand
   
   //car body
-    var carYPos=4.5+carDrive;
+   carYPos=4.5+carDrive;
   var carZPos=-0.4;
   pushMatrix(modelMatrix);
     if (!initArrayBuffer(gl, 'a_Color', redColours, 3, gl.FLOAT)) return -1;
@@ -2353,7 +2440,7 @@ pushMatrix(modelMatrix);
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
   //top right wheel
-  for(i=0;i<90;i=i+3){
+  for(i=0;i<90;i=i+10){
     pushMatrix(modelMatrix);
     if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
     
@@ -2459,7 +2546,7 @@ pushMatrix(modelMatrix);
     
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-  for(i=0;i<90;i=i+5){
+  for(i=0;i<90;i=i+10){
   //lorry 1st back right tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
@@ -2529,7 +2616,7 @@ modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+1.2);
     modelMatrix.rotate(i,1,0,0);   
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
-}
+
   //lorry front left tire
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blackColours, 3, gl.FLOAT)) return -1;
@@ -2539,9 +2626,11 @@ modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY+1.2);
       modelMatrix.translate(lorryX+0.31,lorryZ-0.75, lorryY-1.5); 
     }
     modelMatrix.scale(0.2, 0.5, 0.5); // Scale
-    
+    modelMatrix.rotate(i,1,0,0); 
+  
     drawbox(gl, u_ModelMatrix, u_NormalMatrix, n);
   modelMatrix = popMatrix();
+}
   //car left window
   pushMatrix(modelMatrix);
   if (!initArrayBuffer(gl, 'a_Color', blueColours, 3, gl.FLOAT)) return -1;
